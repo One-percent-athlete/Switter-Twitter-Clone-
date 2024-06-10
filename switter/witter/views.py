@@ -1,7 +1,8 @@
 from django.shortcuts import redirect, render
 from django.contrib import messages
+from django.contrib.auth import authenticate, login, logout
 
-from .forms import SwitForm
+from .forms import SignUpForm, SwitForm
 from .models import Profile, Swit
 
 # Create your views here.
@@ -25,10 +26,11 @@ def home(request):
 def profile_list(request):
     if request.user.is_authenticated:
         profiles = Profile.objects.exclude(user=request.user)
+        return render(request, "profile_list.html", {"profiles":profiles})
     else:
-        profiles = Profile.objects.all()
-
-    return render(request, "profile_list.html", {"profiles":profiles})
+        messages.success(request, "Login Or Register To View Profiles?")
+        return redirect("home")
+    
 
 def profile(request, pk):
     if request.user.is_authenticated:
@@ -44,6 +46,42 @@ def profile(request, pk):
             current_user.save()
         return render(request, "profile.html", {"profile":profile, "swits":swits})
     else:
-        profiles = Profile.objects.all()
         messages.success(request, "Login Or Register To View Profiles?")
-        return render(request, "profile_list.html", {"profiles":profiles})
+        return redirect("home")
+    
+
+def login_user(request):
+    if request.method == "POST":
+        username = request.POST["username"]
+        password = request.POST["password"]
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+             login(request, user)
+             messages.success(request, "Welcome Back. Ready For Some Swits?")
+             return redirect("home")
+        else:
+             messages.success(request, "Something Went Wrong. Please Try Again.")
+             return redirect("login")
+    else:   
+        return render(request, "login.html")
+
+def logout_user(request):
+    logout(request)
+    messages.success(request, "See You Later..")
+    return redirect("home")
+
+def register(request):
+    form = SignUpForm()
+    if request.method == "POST":
+        form = SignUpForm(request.POST)
+        if form.is_valid():
+            form.save()
+            username = form.cleaned_data["username"]
+            password = form.cleaned_data["password1"]
+            user = authenticate(username=username, password=password)
+            login(request, user)
+            messages.success(request, "Welcome! Ready To Post Some Swits?")
+            return redirect("home")
+       
+    return render(request, "register.html", {"form":form})
+

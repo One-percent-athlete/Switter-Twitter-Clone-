@@ -3,19 +3,6 @@
 
 {% block content %}
 
-{% if messages %}
-  {% for message in messages %}
-  <div class="alert alert-secondary alert-dismissible fade show" role="alert">
-    {{ message }} 
-    <a class="btn btn-outline-info mx-2" href="#">Login</a> 
-    <a class="btn btn-outline-info" href="#">Register</a> 
-    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-  </div>
-
-
-  {% endfor %}
-{% endif %}
-
 {% for profile in profiles %}
 <br>
 <div class="card mb-3" style="max-width: 540px;">

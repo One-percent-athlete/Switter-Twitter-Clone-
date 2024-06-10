@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
+{% if user.is_authenticated %}
 {% if profile %}
     <div class="container">
         <div class="row">
@@ -71,6 +72,8 @@
         </div>
     </div>
     
+    
+{% endif %}
     
 {% endif %}
 {% endblock %}

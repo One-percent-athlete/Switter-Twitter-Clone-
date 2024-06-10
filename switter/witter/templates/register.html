@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+{% if messages %}
+    {% for message in messages %}
+    <div class="alert alert-secondary alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+  {% endfor %}
+{% endif %}
+
+{% if user.is_authenticated %}
+<center>
+    <br><br>
+    <h3>You Are Already Logged In!</h3>
+    <br><br>
+    <a class="btn btn-outline-info" href="{% url 'home' %}">Home</a>
+</center>
+
+{% else %}
+
+<br>
+<div class="col-md-6 offset-md-3">
+    <h1>Register</h1>
+    <br><br>
+    <form method="post" action="{% url 'register' %}">
+        {% csrf_token %}
+        {{ form.as_p }}<br>
+        <button type="submit" class="btn btn-outline-info">Register</button>
+      </form>
+</div>
+<br>
+{% endif %}
+
+{% endblock %}
