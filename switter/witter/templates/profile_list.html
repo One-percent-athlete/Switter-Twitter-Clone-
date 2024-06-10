@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{%  load static %}
+
+{% block content %}
+
+{% if messages %}
+  {% for message in messages %}
+  <div class="alert alert-secondary alert-dismissible fade show" role="alert">
+    {{ message }} 
+    <a class="btn btn-outline-info mx-2" href="#">Login</a> 
+    <a class="btn btn-outline-info" href="#">Register</a> 
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+
+
+  {% endfor %}
+{% endif %}
+
+{% for profile in profiles %}
+<br>
+<div class="card mb-3" style="max-width: 540px;">
+    <div class="row g-0">
+      <div class="col-md-4">
+        <img src="{% static 'profile_pics/default_pfp.png' %}" class="img-fluid rounded-start" alt="Profile Picture">
+      </div>
+      <div class="col-md-8">
+        <div class="card-body">
+          <h5 class="card-title">{{ profile.user.username }}</h5>
+          <a class="card-text" href="{% url 'profile' profile.user.id %}">@{{ profile.user|lower }}</a>
+          <br>
+          <br>
+          <br>
+          <p class="card-text mb-0"><small class="text-body-secondary ">Last Updated : {{ profile.last_updated }}</small></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+<br>
+{% endfor %}
+{% endblock %}

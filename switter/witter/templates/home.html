@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+{% if messages %}
+    {% for message in messages %}
+    <div class="alert alert-secondary alert-dismissible fade show" role="alert">
+        {{ message }} 
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+
+
+  {% endfor %}
+{% endif %}
+<br>
+<h1>Daily Swits</h1>
+<br>
+<div class="container">
+    <div class="row">
+        <div class="col-8">
+            {% for swit in swits %}
+            <div class="alert alert-info" role="alert">
+            
+            {{ swit.body }}<br>
+            <small class="text-muted">({{ swit.create_at }} by <a href="{% url 'profile' swit.user.id %}">@{{ swit.user }}</a>)</small><br>
+            </div>
+        {% endfor %}
+        </div>
+        <div class="col-4">
+
+            {% if form %}
+            <form method="post">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <div class="text-center">
+
+                    <button type="submit" class="btn btn-info">Post Swit!!</button>
+                </div>
+            </form>
+            {% endif %}
+                
+        </div>
+    </div>
+</div>
+
+{% endblock %}
