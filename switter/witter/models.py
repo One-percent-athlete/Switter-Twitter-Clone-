@@ -8,6 +8,8 @@ class Profile(models.Model):
 
     last_updated = models.DateTimeField(User, auto_now=True)
 
+    profile_img = models.ImageField(null=True, blank=True, upload_to="images/profile_pics/")
+
     def __str__(self):
         return self.user.username
 
@@ -21,9 +23,14 @@ def create_profile(sender, instance, created, **kwags):
 post_save.connect(create_profile,sender=User)
 
 class Swit(models.Model):
-    user = models.ForeignKey(User, related_name="swits", on_delete=models.DO_NOTHING)
+    user = models.ForeignKey(User, related_name="swits", on_delete=models.PROTECT)
     body = models.CharField(max_length=250)
     create_at = models.DateTimeField(auto_now_add=True)
+
+    likes = models.ManyToManyField(User, related_name="swit_like", blank=True)
+
+    def num_of_likes(self):
+        return self.likes.count()
 
     def __str__(self):
         return (

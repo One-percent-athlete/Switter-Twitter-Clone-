@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+{% if messages %}
+    {% for message in messages %}
+    <div class="alert alert-secondary alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+  {% endfor %}
+{% endif %}
+
+{% if user.is_authenticated %}
+
+<br>
+<div class="col-md-6 offset-md-3">
+    <h1>Edit Profile</h1>
+    <br><br>
+    <form method="post" enctype="multipart/form-data" action="{% url 'update_user' %}">
+        {% csrf_token %}
+        {{ user_form.as_p }}<br>
+        {{ profile_img_form.as_p }}<br>
+        <button type="submit" class="btn btn-outline-info">Update</button>
+        <a class="btn btn-danger" href="{% url 'update_password' current_user.id %}">Change Password</a>
+    </form>
+
+</div>
+<br>
+
+{% else %}
+
+<center>
+    <br><br>
+    <h3>You Have To Register Or Login</h3>
+    <br><br>
+    <a class="btn btn-outline-info" href="{% url 'register' %}">Register</a>
+    <a class="btn btn-info" href="{% url 'login' %}">Login</a>
+</center>
+
+{% endif %}
+
+{% endblock %}
