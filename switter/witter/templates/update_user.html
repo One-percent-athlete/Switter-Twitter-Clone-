@@ -20,7 +20,7 @@
     <form method="post" enctype="multipart/form-data" action="{% url 'update_user' %}">
         {% csrf_token %}
         {{ user_form.as_p }}<br>
-        {{ profile_img_form.as_p }}<br>
+        {{ profile_form.as_p }}<br>
         <button type="submit" class="btn btn-outline-info">Update</button>
         <a class="btn btn-danger" href="{% url 'update_password' current_user.id %}">Change Password</a>
     </form>

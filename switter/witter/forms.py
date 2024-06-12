@@ -1,8 +1,8 @@
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm,SetPasswordForm
-from django.contrib.auth.models import User
+from django.contrib.auth.forms import User
 from django import forms
-
 from .models import Swit, Profile
+
 
 class SwitForm(forms.ModelForm):
     body = forms.CharField(required=True, widget=forms.widgets.Textarea(
@@ -84,9 +84,14 @@ class ChangePasswordForm(SetPasswordForm):
 		self.fields['new_password2'].label = ''
 		self.fields['new_password2'].help_text = '<span class="form-text text-muted"><small>Enter the same password.</small></span>'
 
-class ProfileImgForm(forms.ModelForm):
+class ProfileForm(forms.ModelForm):
 	profile_img = forms.ImageField(label= "Profile Picture")
-	
+	profile_bio = forms.CharField(label="Bio", max_length=500, widget=forms.Textarea(attrs={'class':'form-control', 'placeholder':'Profile Bio'}))
+	homepage = forms.CharField(label="Website", max_length=500, widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'Website Link'}))
+	facebook = forms.CharField(label="Facebook", max_length=500, widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'Facebook Link'}))
+	instagram = forms.CharField(label="Instagram", max_length=500, widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'Instagram Link'}))
+	linkedin = forms.CharField(label="LinkedIn", max_length=500, widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'LinkedIn Link'}))
+
 	class Meta:
 		model = Profile
-		fields = ('profile_img',)
+		fields = ('profile_img', 'profile_bio', 'homepage', 'facebook', 'instagram', 'linkedin')

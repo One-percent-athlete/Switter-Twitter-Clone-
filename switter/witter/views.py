@@ -3,7 +3,7 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 
-from .forms import SwitForm, SignUpForm, UpdateUserForm, ChangePasswordForm, ProfileImgForm
+from witter.forms import SwitForm, SignUpForm, UpdateUserForm, ChangePasswordForm, ProfileForm
 from .models import Profile, Swit
 
 # Create your views here.
@@ -94,16 +94,16 @@ def update_user(request):
         current_user = User.objects.get(id=request.user.id)
         user_profile = Profile.objects.get(user__id=request.user.id)
         user_form = UpdateUserForm(request.POST or None, request.FILES or None, instance=current_user)
-        profile_img_form = ProfileImgForm(request.POST or None, request.FILES or None, instance=user_profile)
-        if user_form.is_valid() and profile_img_form.is_valid():
+        profile_form = ProfileForm(request.POST or None, request.FILES or None, instance=user_profile)
+        if user_form.is_valid() and profile_form.is_valid():
             user_form.save()
-            profile_img_form.save()
+            profile_form.save()
             login(request, current_user)
             profile = Profile.objects.get(id=current_user.id)
             swits = Swit.objects.filter(user_id=current_user.id).order_by("-create_at")
             messages.success(request, "You Profile Has Been Updated!")
             return render(request, "profile.html", {"profile":profile, "swits":swits})
-        return render(request, "update_user.html", {"user_form": user_form, "profile_img_form": profile_img_form, "current_user": current_user})
+        return render(request, "update_user.html", {"user_form": user_form, "profile_form": profile_form, "current_user": current_user})
     else:
         messages.success(request, "Do You Want To Register Or Login First?")
         return redirect("home")
@@ -135,7 +135,69 @@ def swit_like(request, pk):
             swit.likes.remove(request.user)
         else:
             swit.likes.add(request.user)
-        return redirect("home")
+        return redirect(request.META.get("HTTP_REFERER"))
     else:
         messages.success(request, "You Have To Login First.")
+        return redirect("home")
+    
+def swit_show(request, pk):
+    if request.user.is_authenticated:
+        if request.method == "POST":
+            current_user = request.user.profile
+            action = request.POST["follow"]
+            if action == "unfollow":
+                current_user.follows.remove(profile)
+            elif action == "follow":
+                current_user.follows.add(profile)
+            current_user.save()
+        swit = get_object_or_404(Swit, id=pk)
+        profile = Profile.objects.get(id=swit.user.id)
+
+        return render(request, "swit_show.html", {"swit": swit, "profile":profile})
+
+    else:
+        messages.success(request, "You Have To Login First.")
+        return redirect("home")
+    
+
+
+def unfollow(request, pk):
+    if request.user.is_authenticated:
+        profile = Profile.objects.get(user_id=pk)
+        
+        current_user = request.user.profile
+        current_user.follows.remove(profile)
+        current_user.save()
+        return redirect(request.META.get("HTTP_REFERER"))
+    else:
+        messages.success(request, "Login Or Register To View Profiles?")
+        return redirect("home")
+    
+def follow(request, pk):
+    if request.user.is_authenticated:
+        profile = Profile.objects.get(user_id=pk)
+        
+        current_user = request.user.profile
+        current_user.follows.add(profile)
+        current_user.save()
+        return redirect(request.META.get("HTTP_REFERER"))
+    else:
+        messages.success(request, "Login Or Register To View Profiles?")
+        return redirect("home")
+    
+    
+def follows(request, pk):
+    if request.user.is_authenticated:
+        profile = Profile.objects.get(user_id=pk)
+        return render(request, "follows.html", {"profile": profile})
+    else:
+        messages.success(request, "Login Or Register To View Profiles?")
+        return redirect("home")
+    
+def followers(request, pk):
+    if request.user.is_authenticated:
+        profile = Profile.objects.get(user_id=pk)
+        return render(request, "followers.html", {"profile": profile})
+    else:
+        messages.success(request, "Login Or Register To View Profiles?")
         return redirect("home")

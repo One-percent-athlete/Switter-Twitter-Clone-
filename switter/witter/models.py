@@ -10,6 +10,12 @@ class Profile(models.Model):
 
     profile_img = models.ImageField(null=True, blank=True, upload_to="images/profile_pics/")
 
+    profile_bio = models.CharField(max_length=500, null=True, blank=True)
+    homepage = models.CharField(max_length=500, null=True, blank=True)
+    facebook = models.CharField(max_length=500, null=True, blank=True)
+    instagram = models.CharField(max_length=500, null=True, blank=True)
+    linkedin = models.CharField(max_length=500, null=True, blank=True)
+
     def __str__(self):
         return self.user.username
 
