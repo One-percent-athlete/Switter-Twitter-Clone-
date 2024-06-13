@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+{% if messages %}
+    {% for message in messages %}
+    <div class="alert alert-secondary alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endfor %}
+{% endif %}
+<br>
+<h1>Search Users</h1>
+<br>
+
+<div class="container">
+    <div class="row">
+        <form method="POST" class="my-3">
+            {% csrf_token %}
+            <input type="input" class="form-control" placeholder="Enter Keyword" name="search">
+            <br>    
+            <button type="submit" class="btn btn-outline-info">Search Users</button>
+        </form>
+        <br><br><br><br><br><br><br><br>
+        {% if users %}
+        <h3>Here Are The Results For: "{{ keyword }}"</h3>
+        <br><hr><br>
+    {% for user in users %}
+    <div class="card mb-3 border-0" style="max-width: 540px;">
+        <div class="row g-0">
+        <div class="col-md-4">
+            {% if user.profile.profile_img %}
+            <img src="{{ user.profile.profile_img.url }}" class="img-fluid rounded-circle" alt="Profile Picture">
+            {% else %}
+            <img src="../media/images/profile_pics/default_pfp.png" class="img-fluid rounded-circle" alt="Profile Picture">
+            {% endif %}
+        </div>
+        <div class="col-md-8">
+            <div class="card-body">
+            <h5 class="card-title">{{ user.username }}</h5>
+            <a class="card-text" href="{% url 'profile' user.id %}">@{{ user.username|lower }}</a>
+            <br>
+            <br>
+            <br>
+            <p class="card-text mb-0"><small class="text-body-secondary ">Last Updated : {{ user.profile.last_updated }}</small></p>
+            </div>
+        </div>
+        </div>
+    </div>
+    <hr>
+    <br>
+    {% endfor %}
+{% else %}
+    {% if keyword == None %}
+    {% else %}
+    <h3>There Is No Results For "{{ keyword }}"</h3>
+    {% endif %}
+{% endif %}
+</div>
+    <br><br><br><br><br><br>
+    <br><br><br><br><br><br>
+    <br><br><br><br><br><br>
+</div>
+
+{% endblock %}

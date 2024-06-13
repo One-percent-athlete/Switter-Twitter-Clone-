@@ -128,6 +128,56 @@ def update_password(request, pk):
         messages.success(request, "You Have To Login First.")
         return redirect("home")
 
+def follow(request, pk):
+    if request.user.is_authenticated:
+        profile = Profile.objects.get(user_id=pk)
+        
+        current_user = request.user.profile
+        current_user.follows.add(profile)
+        current_user.save()
+        return redirect(request.META.get("HTTP_REFERER"))
+    else:
+        messages.success(request, "Login Or Register To View Profiles?")
+        return redirect("home")
+
+def unfollow(request, pk):
+    if request.user.is_authenticated:
+        profile = Profile.objects.get(user_id=pk)
+        
+        current_user = request.user.profile
+        current_user.follows.remove(profile)
+        current_user.save()
+        return redirect(request.META.get("HTTP_REFERER"))
+    else:
+        messages.success(request, "Login Or Register To View Profiles?")
+        return redirect("home")
+    
+    
+def follows(request, pk):
+    if request.user.is_authenticated:
+        if request.user.id == pk:
+            user_profile = Profile.objects.get(user_id=pk)
+            return render(request, "follows.html", {"user_profile": user_profile})
+        else:
+
+            messages.success(request, "That's Not Your Profile!")
+            return redirect("home") 
+    else:
+        messages.success(request, "Login Or Register To View Profiles?")
+        return redirect("home")
+    
+def followers(request, pk):
+    if request.user.is_authenticated:
+        if request.user.id == pk:
+            user_profile = Profile.objects.get(user_id=pk)
+            return render(request, "followers.html", {"user_profile": user_profile})
+        else:
+            messages.success(request, "That's Not Your Profile!")
+            return redirect("home") 
+    else:
+        messages.success(request, "Login Or Register To View Profiles?")
+        return redirect("home")
+    
 def swit_like(request, pk):
     if request.user.is_authenticated:
         swit = get_object_or_404(Swit, id=pk)
@@ -158,46 +208,58 @@ def swit_show(request, pk):
     else:
         messages.success(request, "You Have To Login First.")
         return redirect("home")
-    
 
 
-def unfollow(request, pk):
+def delete_swit(request, pk):
     if request.user.is_authenticated:
-        profile = Profile.objects.get(user_id=pk)
+        swit = get_object_or_404(Swit, id=pk)
+        if request.user.username == swit.user.username:
+            swit.delete()
+            messages.success(request, "Swit Deleted Succesfully!")
+            return redirect(request.META.get("HTTP_REFERER"))
+        else:
+            messages.success(request, "It's Not Your Swit!")
+            return redirect("home")
+        pass
+    else:
+        messages.success(request, "You Have To Login First.")
+        return redirect("home")
         
-        current_user = request.user.profile
-        current_user.follows.remove(profile)
-        current_user.save()
-        return redirect(request.META.get("HTTP_REFERER"))
-    else:
-        messages.success(request, "Login Or Register To View Profiles?")
-        return redirect("home")
-    
-def follow(request, pk):
+def edit_swit(request, pk):
     if request.user.is_authenticated:
-        profile = Profile.objects.get(user_id=pk)
+        swit = get_object_or_404(Swit, id=pk)
+        if request.user.username == swit.user.username:
+            form = SwitForm(request.POST or None, instance=swit)
+            if request.method == "POST":
+                if form.is_valid():
+                    swit = form.save(commit=False)
+                    swit.user = request.user
+                    swit.save()
+                    messages.success(request, "Your Swit Has Been Updated!")
+                    return redirect("home")
+            else:
+                return render(request, "edit_swit.html", {"form": form,"swit": swit})
+
+        else:
+            messages.success(request, "It's Not Your Swit!")
+            return redirect("home")
+    else:
+        messages.success(request, "You Have To Login First.")
+        return redirect("home")
         
-        current_user = request.user.profile
-        current_user.follows.add(profile)
-        current_user.save()
-        return redirect(request.META.get("HTTP_REFERER"))
+def search_swit(request):
+    if request.method == "POST":
+        keyword = request.POST["search"]
+        swits = Swit.objects.filter(body__contains=keyword)
+        return render(request, "search_swit.html", {"swits":swits, "keyword":keyword})
     else:
-        messages.success(request, "Login Or Register To View Profiles?")
-        return redirect("home")
-    
-    
-def follows(request, pk):
-    if request.user.is_authenticated:
-        profile = Profile.objects.get(user_id=pk)
-        return render(request, "follows.html", {"profile": profile})
+        return render(request, "search_swit.html")
+        
+def search_user(request):
+    if request.method == "POST":
+        keyword = request.POST["search"]
+        users = User.objects.filter(username__contains=keyword)
+        return render(request, "search_user.html", {"users":users, "keyword":keyword})
     else:
-        messages.success(request, "Login Or Register To View Profiles?")
-        return redirect("home")
-    
-def followers(request, pk):
-    if request.user.is_authenticated:
-        profile = Profile.objects.get(user_id=pk)
-        return render(request, "followers.html", {"profile": profile})
-    else:
-        messages.success(request, "Login Or Register To View Profiles?")
-        return redirect("home")
+        return render(request, "search_user.html")
+        

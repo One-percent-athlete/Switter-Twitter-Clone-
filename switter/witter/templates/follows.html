@@ -4,11 +4,12 @@
 {% block content %}
 
 <br>
-<h1>Profile List</h1>
+<h1>{{ request.user.username }}'s Followings</h1>
 <br>
 <hr>
 <br>
-{% for profile in profiles %}
+{% if user_profile %}
+{% for profile in user_profile.follows.all %}
 <div class="card mb-3 border-0" style="max-width: 540px;">
     <div class="row g-0">
       <div class="col-md-4">
@@ -24,8 +25,9 @@
           <a class="card-text" href="{% url 'profile' profile.user.id %}">@{{ profile.user|lower }}</a>
           <br>
           <br>
-          <br>
           <p class="card-text mb-0"><small class="text-body-secondary ">Last Updated : {{ profile.last_updated }}</small></p>
+          <br>
+          <a href="{% url 'unfollow' profile.id %}" class="btn btn-outline-danger">Unollow</a>
         </div>
       </div>
     </div>
@@ -33,4 +35,5 @@
   <hr>
 <br>
 {% endfor %}
+{% endif %}
 {% endblock %}

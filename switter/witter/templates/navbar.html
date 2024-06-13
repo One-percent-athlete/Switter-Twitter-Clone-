@@ -7,6 +7,9 @@
         <path d="M11.857 3.143h-1.143V6.57h1.143V3.143zm-3.143 0H7.571V6.57h1.143V3.143z"/>
       </svg>
     </a>
+    <a class="nav-link text-dark mx-sm-5 mx-md-2" href="{% url 'home' %}"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-house" viewBox="0 0 16 16">
+      <path d="M8.707 1.5a1 1 0 0 0-1.414 0L.646 8.146a.5.5 0 0 0 .708.708L2 8.207V13.5A1.5 1.5 0 0 0 3.5 15h9a1.5 1.5 0 0 0 1.5-1.5V8.207l.646.647a.5.5 0 0 0 .708-.708L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.707 1.5ZM13 7.207V13.5a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5V7.207l5-5 5 5Z"/>
+    </svg></a>
     {% else %}
     <a class="navbar-brand text-light mx-4" href="{% url 'home' %}">Switter
       <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-twitch" viewBox="0 0 16 16">
@@ -20,22 +23,18 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav ms-auto mb-2 mb-lg-0 mx-3">
-        {% if user.is_authenticated %}
-        
-        
-        <li class="nav-item">
-      {% if user.profile.profile_img %}
-      <a class="nav-link text-light mx-sm-5 mx-md-2" href="{% url 'profile' request.user.id %}">
-        <img src="{{ user.profile.profile_img.url }}" class="rounded-circle" width="32" height="32"></img></a>
-      {% else %}
-      <a class="nav-link text-light mx-sm-5 mx-md-2" href="{% url 'profile' request.user.id %}">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-person-circle" viewBox="0 0 16 16">
-          <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/>
-          <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1z"/>
-          </svg></a>
-          {% endif %}
-          </li>
-        <div class="vr text-light d-sm-none d-md-block"></div>
+      {% if user.is_authenticated %}
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle text-light" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-search text-light" viewBox="0 0 16 16">
+              <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+            </svg>
+          </a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item text-info" href="{% url 'search_swit' %}">Search Swit</a></li>
+            <li><a class="dropdown-item text-info" href="{% url 'search_user' %}">Search User</a></li>
+          </ul>
+        </li>        
         <li class="nav-item">
           <a class="nav-link text-light mx-sm-5 mx-md-2" href="{% url 'profile_list' %}">
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-people" viewBox="0 0 16 16">
@@ -43,7 +42,19 @@
             </svg>
           </a>
         </li>
-        
+        <div class="vr text-light d-sm-none d-md-block"></div>
+        <li class="nav-item">
+          {% if user.profile.profile_img %}
+          <a class="nav-link text-light mx-sm-5 mx-md-2" href="{% url 'profile' request.user.id %}">
+          <img src="{{ user.profile.profile_img.url }}" class="rounded-circle" width="32" height="32"></img></a>
+          {% else %}
+          <a class="nav-link text-light mx-sm-5 mx-md-2" href="{% url 'profile' request.user.id %}">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-person-circle" viewBox="0 0 16 16">
+            <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/>
+            <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1z"/>
+            </svg></a>
+          {% endif %}
+        </li>
     <li class="nav-item">
       <a class="nav-link text-light mx-sm-5 mx-md-2" href="{% url 'logout' %}">
         <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" class="bi bi-box-arrow-right" viewBox="0 0 16 16">
